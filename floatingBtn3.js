@@ -52,7 +52,7 @@ function createFloatingCallButton({
 
     return {
         setPosition: (newX, newY) => {
-            buttonContainer.style.right = newX;
+            buttonContainer.style.left = newX;
             buttonContainer.style.top = newY;
         },
         remove: () => buttonContainer.remove()
