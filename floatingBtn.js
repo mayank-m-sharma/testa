@@ -65,7 +65,7 @@ function customFunction() {
 
 // Usage example:
 const button = createFloatingCallButton({
-    x: '20px',
+    x: '80%',
     y: '20px',
     size: '32px',
     color: '#4CAF50',
