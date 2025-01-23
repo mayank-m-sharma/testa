@@ -73,7 +73,7 @@ const button = createFloatingCallButton({
 });
 
 // Reposition example:
-button.setPosition('85%', '10px');
+button.setPosition('85%', '8px');
 
 // Remove button:
 // button.remove();
