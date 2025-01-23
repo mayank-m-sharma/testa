@@ -1,5 +1,3 @@
-alert('file loading');
-
 function createFloatingCallButton({
     x = '20px',
     y = '20px',
@@ -75,7 +73,7 @@ const button = createFloatingCallButton({
 });
 
 // Reposition example:
-button.setPosition('100px', '200px');
+button.setPosition('100px', '10px');
 
 // Remove button:
 // button.remove();
