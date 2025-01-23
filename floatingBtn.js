@@ -1,3 +1,5 @@
+alert('file loading');
+
 function createFloatingCallButton({
     x = '20px',
     y = '20px',
