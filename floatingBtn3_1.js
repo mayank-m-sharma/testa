@@ -14,6 +14,17 @@ Object.assign(reactContainer.style, {
 document.body.appendChild(reactContainer);
 
 
+function loadReactApp() {
+    const scriptUrl = 'https://raw.githubusercontent.com/mayank-m-sharma/textgrid-caller-ui/refs/heads/main/dist/assets/index-Dok13o7V.js';
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.async = true;
+    document.head.appendChild(script);
+}
+
+loadReactApp();
+
+
 function createFloatingCallButton({
     x = '20px',
     y = '20px',
