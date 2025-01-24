@@ -104,16 +104,16 @@ function customFunction() {
 }
 
 // Usage example:
-const button = createFloatingCallButton({
-    x: '85%',
-    y: '20px',
-    size: '32px',
-    color: '#4CAF50',
-    onClick: () => customFunction()
-});
+// const button = createFloatingCallButton({
+//     x: '85%',
+//     y: '20px',
+//     size: '32px',
+//     color: '#4CAF50',
+//     onClick: () => customFunction()
+// });
 
-// Reposition example:
-button.setPosition('85.43%', '6.4px');
+// // Reposition example:
+// button.setPosition('85.43%', '6.4px');
 
 // Remove button:
 // button.remove();
