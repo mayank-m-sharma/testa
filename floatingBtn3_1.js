@@ -1,3 +1,18 @@
+const reactContainer = document.createElement('div');
+reactContainer.id = '__root__custom_react_app__';
+Object.assign(reactContainer.style, {
+    position: 'fixed',
+    top: '50px',
+    right: '20px',
+    width: '300px',
+    height: '400px',
+    background: 'white',
+    border: '1px solid #ccc',
+    zIndex: '1000'
+});
+document.body.appendChild(reactContainer);
+
+
 function createFloatingCallButton({
     x = '20px',
     y = '20px',
