@@ -8,7 +8,8 @@ Object.assign(reactContainer.style, {
     height: '400px',
     background: 'white',
     border: '1px solid #ccc',
-    zIndex: '1000'
+    zIndex: '1000',
+    visibility: 'hidden'
 });
 document.body.appendChild(reactContainer);
 
@@ -75,7 +76,11 @@ function createFloatingCallButton({
 }
 
 function customFunction() {
-    alert('hey')
+    const container = document.getElementById('__root__custom_react_app__');
+    if (container) {
+        container.style.visibility = 
+            container.style.visibility === 'hidden' ? 'visible' : 'hidden';
+    }
 }
 
 // Usage example:
