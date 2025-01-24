@@ -13,6 +13,14 @@ Object.assign(reactContainer.style, {
 });
 document.body.appendChild(reactContainer);
 
+function loadReactAppStyles() {
+    const cssUrl = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/textgrid-caller-ui@refs/heads/main/dist/assets/index-DRIicZ0a.css';
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = cssUrl;
+    document.head.appendChild(link);
+}
+loadReactAppStyles();
 
 function loadReactApp() {
     const scriptUrl = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/textgrid-caller-ui@refs/heads/main/dist/assets/index-Dok13o7V.js';
