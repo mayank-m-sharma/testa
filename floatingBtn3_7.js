@@ -1,4 +1,3 @@
-document.querySelector('.hl_header--phone').style.display = 'none';
 const reactContainer = document.createElement('div');
 reactContainer.id = '__root__custom_react_app__';
 Object.assign(reactContainer.style, {
