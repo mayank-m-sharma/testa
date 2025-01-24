@@ -15,7 +15,7 @@ document.body.appendChild(reactContainer);
 
 
 function loadReactApp() {
-    const scriptUrl = 'https://raw.githubusercontent.com/mayank-m-sharma/textgrid-caller-ui/refs/heads/main/dist/assets/index-Dok13o7V.js';
+    const scriptUrl = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/textgrid-caller-ui@refs/heads/main/dist/assets/index-Dok13o7V.js';
     const script = document.createElement('script');
     script.src = scriptUrl;
     script.async = true;
