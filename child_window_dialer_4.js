@@ -3,8 +3,8 @@ let childWindow = null;
 function createChildWindow() {
     // Create child window with specific dimensions
     childWindow = window.open('', '_blank', `
-        width=300,
-        height=400,
+        width=320,
+        height=533,
         left=${window.screen.width - 320},
         top=50,
         resizable=no,
