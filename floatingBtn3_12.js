@@ -23,7 +23,7 @@ function loadReactAppStyles() {
 loadReactAppStyles();
 
 function loadReactApp() {
-    const scriptUrl = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/textgrid-caller-ui@refs/heads/b_20250127210310/dist/assets/index.js';
+    const scriptUrl = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/textgrid-caller-ui@refs/heads/main/dist/assets/index.js;
     const script = document.createElement('script');
     script.src = scriptUrl;
     script.async = true;
