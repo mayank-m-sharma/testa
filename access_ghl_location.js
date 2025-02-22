@@ -1,7 +1,7 @@
 
 let childWindow = null;
 const SCRIPT_URL = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/caller_ui@refs/heads/access_ghl_location_change_01/dist/assets/index-Cr09ra9b.js';
-const CSS_URL = 'https://example.com/react-app.css';
+const CSS_URL = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/caller_ui@refs/heads/access_ghl_location_change_01/dist/assets/index-15Anrwbt.css';
 
 function createChildWindow() {
     // Create child window with specific dimensions
