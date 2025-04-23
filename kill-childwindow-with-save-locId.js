@@ -161,6 +161,7 @@ function monitorUrlChanges() {
           }
   
           currentLocationId = newLocationId;
+          localStorage.setItem('locId', currentLocationId);
           buttonInstance = createFloatingCallButton({
             x: '85%',
             y: '20px',
