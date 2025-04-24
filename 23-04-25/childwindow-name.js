@@ -55,7 +55,7 @@ function loadReactAppStyles() {
 
 function loadReactApp() {
   if (!childWindow) return;
-  const scriptUrl = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/testa@refs/heads/main/save-locid-rb-01.js';
+  const scriptUrl = 'https://cdn.jsdelivr.net/gh/mayank-m-sharma/testa@refs/heads/main/23-04-25/fetch-locid-rb-01.js';
   const script = childWindow.document.createElement('script');
   script.src = scriptUrl;
   script.async = true;
