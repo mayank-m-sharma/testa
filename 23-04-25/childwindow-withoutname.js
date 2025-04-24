@@ -31,7 +31,7 @@ function createChildWindow() {
     menubar=no,
     toolbar=no
   `);
-  childWindow.name = locationId;
+  // childWindow.name = locationId;
   childWindow.document.body.style.margin = '0';
   childWindow.document.body.style.padding = '0';
   childWindow.document.body.style.background = 'white';
