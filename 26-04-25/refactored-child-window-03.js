@@ -44,7 +44,7 @@ const allowedPatterns = [
   ];
   
 function isAllowedUrl(url) {
-    return true;
+    return allowedPatterns.some(pattern => pattern.test(url));
   }
   
 function getLocationIdFromUrl(url) {
