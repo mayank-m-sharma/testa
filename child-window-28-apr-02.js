@@ -1,3 +1,4 @@
+
 let childWindow = null;
 let currentLocationId = "";
 let observer = null;
@@ -144,6 +145,13 @@ function createFloatingCallButton({
         remove: () => buttonContainer.remove()
     };
 }
+async function verifyLocationMappingWithTextgrid(locationId) {
+    const response = await fetch(`https://ghlsdk.textgrid.com/api/ghl/get-ghl-token-by-location/${locationId}`);
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return true;
+}
 
 function monitorUrlChanges() {
     let lastUrl = location.href;
@@ -181,14 +189,16 @@ function monitorUrlChanges() {
                 }
 
                 currentLocationId = newLocationId;
-                buttonInstance = createFloatingCallButton({
-                    x: '85.8%',
-                    y: '20px',
-                    size: '32px',
-                    color: '#4CAF50',
-                    onClick: () => customFunction('click')
-                });
-                buttonInstance.setPosition('85.43%', '6.4px');
+                verifyLocationMappingWithTextgrid(currentLocationId).then(() => {
+                    buttonInstance = createFloatingCallButton({
+                        x: '85.8%',
+                        y: '20px',
+                        size: '32px',
+                        color: '#4CAF50',
+                        onClick: () => customFunction('click')
+                    });
+                    buttonInstance.setPosition('85.43%', '6.4px');
+                })
             }
         }
     }, 1000);
@@ -207,15 +217,19 @@ function customFunction(triggerMethod) {
 function initChildWindow() {
     if (isAllowedUrl(window.location.href)) {
         currentLocationId = getLocationIdFromUrl(window.location.href);
-        buttonInstance = createFloatingCallButton({
-            x: '85%',
-            y: '20px',
-            size: '32px',
-            color: '#4CAF50',
-            onClick: () => customFunction('click')
-        });
-        buttonInstance.setPosition('85.8%', '6.4px');
-        registerSocketEvents();
+        verifyLocationMappingWithTextgrid(currentLocationId).then(() => {
+            buttonInstance = createFloatingCallButton({
+                x: '85%',
+                y: '20px',
+                size: '32px',
+                color: '#4CAF50',
+                onClick: () => customFunction('click')
+            });
+            buttonInstance.setPosition('85.8%', '6.4px');
+            registerSocketEvents();
+        }).catch((error) => {
+            console.log('error creating floating button', error);
+        })
     }
 
     monitorUrlChanges();
