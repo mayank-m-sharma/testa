@@ -6,9 +6,10 @@ let buttonInstance = null;
 let childWindowOpenTrigger = 'click';
 let inboundCallMetaData = {};
 let socketId = "";
+const API_BASE_URL = "https://ghlsdk.textgrid.com"
 
 function connectSocket() {
-    const socket = io("https://ghlsdk.textgrid.com", {
+    const socket = io(API_BASE_URL, {
         transports: ["websocket"],
     });
 
@@ -24,8 +25,8 @@ function connectSocket() {
 
     return socket;
 }
-function registerSocketEvents() {
-    socket.emit("register-location", { locationId: currentLocationId });
+function registerSocketEvents(isActive) {
+    socket.emit("register-location", { locationId: 'hqD2EpUwBJg1nEBWr4jT', isActive });
     console.log('Location registered ', currentLocationId);
 
     socket.on('inbound-call-received', ({ locationId, metadata }) => {
@@ -58,7 +59,7 @@ function getFrontendAppBaseUrl() {
         const { to, from, callId } = inboundCallMetaData;
         inboundParams = `&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&callId=${encodeURIComponent(callId)}`;
     }
-    let frontendBaseUrl = "https://ghlsdk.textgrid.com/app/ui";
+    let frontendBaseUrl = `${API_BASE_URL}/app/ui`;
     let frontendParams = `?locationId=${encodeURIComponent(currentLocationId)}&childWindowOpenTrigger=${encodeURIComponent(childWindowOpenTrigger)}&socketId=${encodeURIComponent(socketId)}`;
     if (inboundParams !== "") {
         frontendParams += inboundParams;
@@ -146,7 +147,7 @@ function createFloatingCallButton({
     };
 }
 async function verifyLocationMappingWithTextgrid(locationId) {
-    const response = await fetch(`https://ghlsdk.textgrid.com/api/ghl/get-ghl-token-by-location/${locationId}`);
+    const response = await fetch(`${API_BASE_URL}/api/ghl/get-ghl-token-by-location/${locationId}`);
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
@@ -157,7 +158,6 @@ function monitorUrlChanges() {
     let lastUrl = location.href;
 
     setInterval(() => {
-        console.log('Checking URL changes');
         const currentUrl = location.href;
         const isValidNow = isAllowedUrl(currentUrl);
         const newLocationId = getLocationIdFromUrl(currentUrl);
@@ -226,8 +226,8 @@ function initChildWindow() {
                 onClick: () => customFunction('click')
             });
             buttonInstance.setPosition('85.8%', '6.4px');
-            registerSocketEvents();
-        }).catch((error) => {
+            registerSocketEvents(true);
+        }).catch((error) => {   
             console.log('error creating floating button', error);
         })
     }
