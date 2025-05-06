@@ -26,7 +26,7 @@ function connectSocket() {
     return socket;
 }
 function registerSocketEvents(isActive) {
-    socket.emit("register-location", { locationId: 'hqD2EpUwBJg1nEBWr4jT', isActive });
+    socket.emit("register-location", { locationId: currentLocationId, isActive });
     console.log('Location registered ', currentLocationId);
 
     socket.on('inbound-call-received', ({ locationId, metadata }) => {
