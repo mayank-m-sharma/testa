@@ -160,6 +160,13 @@ function createFloatingCallButton({
     };
 }
 
+async function verifyLocationMappingWithTextgrid(locationId) {
+    const response = await fetch(`${API_BASE_URL}/api/ghl/get-ghl-token-by-location/${locationId}`);
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return true;
+}
 
 function monitorUrlChanges() {
     let lastUrl = location.href;
