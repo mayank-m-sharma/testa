@@ -68,10 +68,10 @@ function getLocationIdFromUrl(url) {
 function getFrontendAppBaseUrl() {
   let inboundParams = "";
   if (Object.keys(inboundCallMetaData).length) {
-    const { to, from, callId } = inboundCallMetaData;
+    const { to, from, callId, historyId } = inboundCallMetaData;
     inboundParams = `&from=${encodeURIComponent(from)}&to=${encodeURIComponent(
       to
-    )}&callId=${encodeURIComponent(callId)}`;
+    )}&callId=${encodeURIComponent(callId)}&historyId=${encodeURIComponent(historyId)}`;
   }
   if (Object.keys(directCallMetaData).length) {
     const { contactId } = directCallMetaData;
