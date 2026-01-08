@@ -8,6 +8,7 @@ let directCallMetaData = {};
 let socketId = "";
 const API_BASE_URL = "https://ghlsdk.textgrid.com";
 let directCallButtonInstance = null;
+let oldChildElement = null; // Store reference to oldChild element
 
 function closeChildWindow() {
   if (childWindow) {
@@ -20,6 +21,27 @@ function isChildWindowOpen() {
   return !!childWindow && document.body.contains(childWindow);
 }
 
+// Helper function to show oldChild and hide textgrid button
+function showOldChildHideTextgrid() {
+  if (oldChildElement) {
+    oldChildElement.style.display = "";
+  }
+  const textgridButton = document.getElementById("textgrid-floating-call-button");
+  if (textgridButton) {
+    textgridButton.style.display = "none";
+  }
+}
+
+// Helper function to hide oldChild and show textgrid button
+function hideOldChildShowTextgrid() {
+  if (oldChildElement) {
+    oldChildElement.style.display = "none";
+  }
+  const textgridButton = document.getElementById("textgrid-floating-call-button");
+  if (textgridButton) {
+    textgridButton.style.display = "flex";
+  }
+}
 
 function connectSocket() {
   const socket = io(API_BASE_URL, {
@@ -188,7 +210,11 @@ function createFloatingCallButton({
   if (existingButton) {
     console.log("Floating call button already exists");
     return {
-      remove: () => existingButton?.remove?.(),
+      remove: () => {
+        existingButton?.remove?.();
+        // Show oldChild when textgrid button is removed
+        showOldChildHideTextgrid();
+      },
     };
   }
 
@@ -283,8 +309,11 @@ function createFloatingCallButton({
       }
 
       waitForElements().then(({ parent, oldChild }) => {
+        // Store reference to oldChild
+        oldChildElement = oldChild;
         parent.insertBefore(container, oldChild);
-        oldChild.style.display = "none";
+        // Hide oldChild and show textgrid button
+        hideOldChildShowTextgrid();
       });
     };
 
@@ -308,6 +337,8 @@ function createFloatingCallButton({
       remove: () => {
         observer.disconnect();
         container?.remove?.();
+        // Show oldChild when textgrid button is removed
+        showOldChildHideTextgrid();
       },
     };
   } else {
@@ -515,6 +546,8 @@ function monitorUrlChanges() {
         if (isChildWindowOpen()) {
           closeChildWindow();
         }
+        // Show oldChild when location is invalid
+        showOldChildHideTextgrid();
         currentLocationId = null;
         return;
       }
@@ -591,7 +624,12 @@ function initChildWindow() {
       })
       .catch((error) => {
         console.log("error creating buttons", error);
+        // If verification fails, show oldChild
+        showOldChildHideTextgrid();
       });
+  } else {
+    // If initial URL is not allowed, make sure oldChild is visible
+    showOldChildHideTextgrid();
   }
 
   monitorUrlChanges();
