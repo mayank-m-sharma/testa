@@ -1,3 +1,5 @@
+console.log("TextGrid dialer loaded");
+
 let childWindow = null;
 let currentLocationId = "";
 let observer = null;
@@ -9,6 +11,12 @@ let socketId = "";
 const API_BASE_URL = "https://ghlsdk.textgrid.com";
 let directCallButtonInstance = null;
 let oldChildElement = null; // Store reference to oldChild element
+let socket = null;
+const allowedPatterns = [
+  /\/v2\/location\/([a-zA-Z0-9]+)\//,
+  /\/v2\/location\/([a-zA-Z0-9]+)\/contacts\/detail\/([a-zA-Z0-9]+)/,
+];
+
 
 function closeChildWindow() {
   if (childWindow) {
@@ -43,7 +51,23 @@ function hideOldChildShowTextgrid() {
   }
 }
 
+function disconnectSocket() {
+  if (socket) {
+    console.log("Disconnecting existing socket:", socket.id);
+    // Remove all listeners to prevent memory leaks
+    socket.off("connect");
+    socket.off("disconnect");
+    socket.off("inbound-call-received");
+    // Disconnect the socket
+    socket.disconnect();
+    socket = null;
+    socketId = "";
+  }
+}
+
+
 function connectSocket() {
+  disconnectSocket();
   const socket = io(API_BASE_URL, {
     transports: ["websocket"],
   });
@@ -51,7 +75,6 @@ function connectSocket() {
   socket.on("connect", () => {
     console.log("Socket connected with id:", socket.id);
     socketId = socket.id;
-    initChildWindow();
   });
 
   socket.on("disconnect", () => {
@@ -71,12 +94,10 @@ function registerSocketEvents(isActive) {
   });
 }
 
-const socket = connectSocket();
 
-const allowedPatterns = [
-  /\/v2\/location\/([a-zA-Z0-9]+)\//,
-  /\/v2\/location\/([a-zA-Z0-9]+)\/contacts\/detail\/([a-zA-Z0-9]+)/,
-];
+socket = connectSocket();
+initChildWindow();
+
 
 function isAllowedUrl(url) {
   return allowedPatterns.some((pattern) => pattern.test(url));
@@ -516,7 +537,7 @@ function monitorUrlChanges() {
     if (currentUrl !== lastUrl) {
       lastUrl = currentUrl;
       const locationChanged = newLocationId !== currentLocationId;
-
+      socket = connectSocket();
       if (isContactDetailPage) {
         if (!directCallButtonInstance) {
           verifyLocationMappingWithTextgrid(newLocationId).then(() => {
@@ -562,6 +583,7 @@ function monitorUrlChanges() {
         }
 
         currentLocationId = newLocationId;
+        registerSocketEvents(true);
         verifyLocationMappingWithTextgrid(currentLocationId).then(() => {
           buttonInstance = createFloatingCallButton({
             size: "32px",
@@ -586,6 +608,7 @@ function customFunction(triggerMethod) {
 }
 
 function initChildWindow() {
+  console.log("Initialized Child window")
   if (isAllowedUrl(window.location.href)) {
     currentLocationId = getLocationIdFromUrl(window.location.href);
     // Check if it's a contact detail page
