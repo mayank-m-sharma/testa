@@ -503,6 +503,7 @@ function createDirectCallContactCta({
 
   handleDOMChanges();
 
+
   return {
     remove: () => {
       observer.disconnect();
@@ -510,6 +511,7 @@ function createDirectCallContactCta({
     },
   };
 }
+
 
 async function verifyLocationMappingWithTextgrid(locationId) {
   const response = await fetch(
@@ -690,3 +692,128 @@ async function exitFullscreenIfNeeded() {
   }
   return false;
 }
+
+  function initGhlOpportunityCallHook({
+  onCall,
+  root = document,
+  // Only run when the pathname ends with this:
+  onlyOnPathEndsWith = "opportunities/list",
+} = {}) {
+  console.log("initGhlOpportunityCallHook called");
+  if (typeof onCall !== "function") {
+    throw new Error("initGhlOpportunityCallHook: onCall callback is required");
+  }
+
+  // ---- URL guard
+  const path = (window.location && window.location.pathname) || "";
+  if (!path.endsWith("/" + onlyOnPathEndsWith) && !path.endsWith(onlyOnPathEndsWith)) {
+    // Not the opportunities list page; do nothing.
+    return { disconnect() {}, rescan() {} };
+  }
+
+  // ---- selectors
+  const CARD_SELECTOR = ".opportunitiesCard";
+  const DRAG_CARD_SELECTOR = ".cardWrapper.mb-2.cursor-move";
+  const PHONE_PATH_SELECTOR = 'svg path[d^="M14.05 6A5 5 0 0118 9.95"]';
+
+  function findCallSvg(opCardEl) {
+    // 1) robust: match by phone icon path fingerprint
+    const pathEl = opCardEl.querySelector(PHONE_PATH_SELECTOR);
+    if (pathEl) return pathEl.closest("svg");
+
+    // 2) fallback: first icon in the icon row
+    return opCardEl.querySelector('.ui-card-content > .flex > .inline-flex:first-child svg');
+  }
+
+  function getContactId(opCardEl) {
+    const el = opCardEl.querySelector("[data-contact-id]");
+    return el ? el.getAttribute("data-contact-id") : null;
+  }
+
+  const MARK_ATTR = "data-tg-call-hooked";
+  const isHooked = (el) => el && el.getAttribute(MARK_ATTR) === "1";
+  const markHooked = (el) => el && el.setAttribute(MARK_ATTR, "1");
+
+  function scanAndMark(container) {
+    const opCards = Array.from(container.querySelectorAll(CARD_SELECTOR));
+    for (const opCard of opCards) {
+      const callSvg = findCallSvg(opCard);
+      if (callSvg && !isHooked(callSvg)) markHooked(callSvg);
+    }
+  }
+
+  function delegatedClickHandler(e) {
+    // Ensure click is inside an opportunities card
+    const opCard = e.target.closest(CARD_SELECTOR);
+    if (!opCard) return;
+
+    // Ensure click is on the phone icon (path or the matching svg)
+    const clickedSvg = e.target.closest("svg");
+    if (!clickedSvg) return;
+
+    const hasPhonePath =
+      e.target.matches(PHONE_PATH_SELECTOR) ||
+      !!clickedSvg.querySelector(PHONE_PATH_SELECTOR);
+
+    if (!hasPhonePath) return;
+
+    // Ensure it's THE call icon for this card (not some other svg)
+    const callSvg = findCallSvg(opCard);
+    if (!callSvg || callSvg !== clickedSvg) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    onCall({
+      contactId: getContactId(opCard),
+      cardEl: opCard,
+      svgEl: callSvg,
+      event: e,
+    });
+  }
+
+  const observer = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (!(node instanceof Element)) continue;
+
+        if (node.matches?.(CARD_SELECTOR) || node.querySelector?.(CARD_SELECTOR)) {
+          scanAndMark(node);
+        } else if (node.matches?.(DRAG_CARD_SELECTOR) || node.querySelector?.(DRAG_CARD_SELECTOR)) {
+          scanAndMark(node);
+        }
+      }
+    }
+  });
+
+  // init
+  scanAndMark(root);
+  document.addEventListener("click", delegatedClickHandler, true);
+
+  observer.observe(root === document ? document.body : root, {
+    childList: true,
+    subtree: true,
+  });
+
+  return {
+    disconnect() {
+      observer.disconnect();
+      document.removeEventListener("click", delegatedClickHandler, true);
+    },
+    rescan() {
+      scanAndMark(root);
+    },
+  };
+}
+
+initGhlOpportunityCallHook({
+  onCall: ({ contactId }) => {  
+   console.log("Custom dial:", contactId);
+   console.log("Current Location ID:", currentLocationId);
+   directCallMetaData = {
+      locationId: currentLocationId,
+      contactId: contactId,
+    };
+    customFunction("click");
+  }
+});
