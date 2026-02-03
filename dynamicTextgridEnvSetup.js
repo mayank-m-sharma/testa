@@ -522,6 +522,7 @@ async function verifyLocationMappingWithTextgrid(locationId) {
   }
   const data = await response.json();
   if (data.voice_takeover === false) {
+    console.log("🟠 attempt to reject location mapping")
     throw new Error("Cannot verify location mapping with Textgrid due to voice takeover being false");
   }
   return true;
