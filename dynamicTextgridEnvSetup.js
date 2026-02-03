@@ -521,9 +521,8 @@ async function verifyLocationMappingWithTextgrid(locationId) {
     throw new Error("Network response was not ok");
   }
   const data = await response.json();
-  console.log("🟠🟠 LOCATION DATA MAPPING----", data);
   if (data.voice_takeover === false) {
-    return false;
+    throw new Error("Cannot verify location mapping with Textgrid due to voice takeover being false");
   }
   return true;
 }
