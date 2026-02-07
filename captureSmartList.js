@@ -950,7 +950,7 @@ function initGhlSmartListCallHook({
         if (!isSmartListUrl()) return;
 
         // Selector for phone cells
-        const CELL_SELECTOR = '.tabular-cell[tabulator-field="phone"]';
+        const CELL_SELECTOR = '.tabulator-cell[tabulator-field="phone"]';
         const cells = Array.from(root.querySelectorAll(CELL_SELECTOR));
 
         cells.forEach(cell => {
