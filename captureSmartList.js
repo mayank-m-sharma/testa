@@ -929,17 +929,24 @@ function initGhlSmartListCallHook({
 
         // Let's look for divs that have 10+ digits.
         const divs = Array.from(cell.querySelectorAll('div'));
+        let bestMatch = null;
+        let shortestLength = Infinity;
+
         for (const div of divs) {
             // skip the icon container
             if (div.classList.contains('phone-call-icon')) continue;
 
             const text = div.textContent.trim();
             const digits = text.replace(/\D/g, '');
-            if (digits.length >= 10 && (text.includes('-') || text.includes('('))) {
-                return text;
+            // Check for valid length (e.g., 10-15 digits to allow for country code but avoid double)
+            if (digits.length >= 10 && digits.length <= 15 && (text.includes('-') || text.includes('('))) {
+                if (text.length < shortestLength) {
+                    shortestLength = text.length;
+                    bestMatch = text;
+                }
             }
         }
-        return null;
+        return bestMatch;
     }
 
     function isSmartListUrl() {
