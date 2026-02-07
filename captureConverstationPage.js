@@ -118,7 +118,13 @@ function getFrontendAppBaseUrl() {
     }
     if (Object.keys(directCallMetaData).length) {
         const { contactId } = directCallMetaData;
-        inboundParams = `&contactId=${encodeURIComponent(contactId)}`;
+        if (contactId) {
+            inboundParams = `&contactId=${encodeURIComponent(contactId)}`;
+        }
+        const { directCallContactNumber } = directCallMetaData;
+        if (directCallContactNumber) {
+            inboundParams += `&directCallContactNumber=${encodeURIComponent(directCallContactNumber)}`;
+        }
     }
     let frontendBaseUrl = `${API_BASE_URL}/app/ui`;
     let frontendParams = `?locationId=${encodeURIComponent(
@@ -900,5 +906,10 @@ function initGhlConversationsCallHook({
 initGhlConversationsCallHook({
     onCall: ({ phoneNumber }) => {
         console.log("Custom conversation dialer triggered for:", phoneNumber);
+        directCallMetaData = {
+            locationId: currentLocationId,
+            directCallContactNumber: phoneNumber,
+        };
+        customFunction("click");
     }
 });
