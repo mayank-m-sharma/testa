@@ -913,3 +913,97 @@ initGhlConversationsCallHook({
         customFunction("click");
     }
 });
+
+function initGhlSmartListCallHook({
+    onCall,
+} = {}) {
+    console.log("initGhlSmartListCallHook called");
+    if (typeof onCall !== "function") {
+        throw new Error("initGhlSmartListCallHook: onCall callback is required");
+    }
+
+    // The user provided SVG path for smart list trigger
+    const PHONE_PATH_D = "M8.38 8.853a14.603 14.603 0 002.847 4.01 14.603 14.603 0 004.01 2.847c.124.06.187.09.265.112.28.082.625.023.862-.147.067-.048.124-.105.239-.219.35-.35.524-.524.7-.639a2 2 0 012.18 0c.176.115.35.29.7.64l.195.194c.532.531.797.797.942 1.082a2 2 0 010 1.806c-.145.285-.41.551-.942 1.082l-.157.158c-.53.53-.795.797-1.155.997-.4.224-1.02.386-1.478.384-.413-.001-.695-.081-1.26-.241a19.038 19.038 0 01-8.283-4.874A19.039 19.039 0 013.17 7.761c-.16-.564-.24-.846-.241-1.26a3.377 3.377 0 01.384-1.477c.202-.36.467-.625.997-1.155l.157-.158c.532-.53.798-.797 1.083-.941a2 2 0 011.805 0c.286.144.551.41 1.083.942l.195.194c.35.35.524.525.638.7a2 2 0 010 2.18c-.114.177-.289.352-.638.701-.115.114-.172.172-.22.238-.17.238-.228.582-.147.862.023.08.053.142.113.266z";
+
+    function getPhoneNumber(cell) {
+
+        // Let's look for divs that have 10+ digits.
+        const divs = Array.from(cell.querySelectorAll('div'));
+        for (const div of divs) {
+            // skip the icon container
+            if (div.classList.contains('phone-call-icon')) continue;
+
+            const text = div.textContent.trim();
+            const digits = text.replace(/\D/g, '');
+            if (digits.length >= 10 && (text.includes('-') || text.includes('('))) {
+                return text;
+            }
+        }
+        return null;
+    }
+
+    function isSmartListUrl() {
+        return /\/v2\/location\/[^/]+\/contacts\/smart_list/.test(window.location.href);
+    }
+
+    function scanAndHook(root) {
+        if (!isSmartListUrl()) return;
+
+        // Selector for phone cells
+        const CELL_SELECTOR = '.tabular-cell[tabulator-field="phone"]';
+        const cells = Array.from(root.querySelectorAll(CELL_SELECTOR));
+
+        cells.forEach(cell => {
+            // Find the call icon wrapper
+            const iconWrapper = cell.querySelector('.phone-call-icon');
+            if (!iconWrapper) return;
+
+            // Check if already hooked
+            if (iconWrapper.getAttribute('data-tg-sl-hooked') === '1') return;
+
+            const svg = iconWrapper.querySelector('svg');
+            if (!svg) return;
+
+            console.log("Found smart list call button, attaching hook...");
+
+            iconWrapper.addEventListener('click', (e) => {
+                console.log("Smart list call button clicked");
+                e.preventDefault();
+                e.stopPropagation();
+
+                const phone = getPhoneNumber(cell);
+                if (phone) {
+                    console.log("Extracted phone from smart list:", phone);
+                    onCall({ phoneNumber: phone });
+                } else {
+                    console.warn("Could not find phone number in smart list cell");
+                }
+            }, true); // capturing phase to preempt GHL handler
+
+            iconWrapper.setAttribute('data-tg-sl-hooked', '1');
+        });
+    }
+
+    const observer = new MutationObserver((mutations) => {
+        // Debounce or just run?
+        // Since it's a mutation observer, we can potentially look at addedNodes but easier to just scan valid containers.
+        // Smart list loads rows dynamically.
+        scanAndHook(document.body);
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Initial scan
+    scanAndHook(document.body);
+}
+
+initGhlSmartListCallHook({
+    onCall: ({ phoneNumber }) => {
+        console.log("Custom smart list dialer triggered for:", phoneNumber);
+        directCallMetaData = {
+            locationId: currentLocationId,
+            directCallContactNumber: phoneNumber,
+        };
+        customFunction("click");
+    }
+});
