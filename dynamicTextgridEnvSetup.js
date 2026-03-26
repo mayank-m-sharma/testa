@@ -1,4 +1,4 @@
-console.log("TextGrid dialer loaded - V-2.0.1 - Fix smart-list warning");
+console.log("TextGrid dialer loaded - V-2.0.2 - Update Dialer headline");
 
 let childWindow = null;
 let currentLocationId = "";
@@ -172,7 +172,7 @@ function createChildWindow() {
     header.style.justifyContent = "space-between";
     header.style.padding = "0 10px";
     header.style.fontWeight = "bold";
-    header.innerText = "TextGrid Dialer";
+    header.innerText = "Dialer";
 
     const closeBtn = document.createElement("button");
     closeBtn.textContent = "×";
