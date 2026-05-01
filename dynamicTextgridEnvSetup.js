@@ -1,4 +1,4 @@
-console.log("TextGrid dialer loaded - V-2.0.3 - Update contact-details page phone selector");
+console.log("TextGrid dialer loaded - V-2.0.3 - Update contact-details direct click handler: fixed event propogation");
 
 let childWindow = null;
 let currentLocationId = "";
@@ -481,8 +481,13 @@ function createDirectCallContactCta({
         if (document.getElementById("textgrid-direct-call-button")) {
             return;
         }
+        handleParentClick = (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+        }
 
         const parent = await waitForParentElement();
+        parent.addEventListener("click", handleParentClick);
         // Clear existing children
         while (parent.firstChild) {
             parent.removeChild(parent.firstChild);
