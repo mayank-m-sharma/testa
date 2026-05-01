@@ -1,4 +1,4 @@
-console.log("TextGrid dialer loaded - V-2.0.3 - Update contact-details direct click handler: fixed event propogation");
+console.log("TextGrid dialer loaded - V-2.0.4 - add stop propagation to direct call button click event");
 
 let childWindow = null;
 let currentLocationId = "";
@@ -487,7 +487,6 @@ function createDirectCallContactCta({
         }
 
         const parent = await waitForParentElement();
-        parent.addEventListener("click", handleParentClick);
         // Clear existing children
         while (parent.firstChild) {
             parent.removeChild(parent.firstChild);
@@ -562,7 +561,9 @@ function monitorUrlChanges() {
                         directCallButtonInstance = createDirectCallContactCta({
                             size: "32px",
                             color: "#4CAF50",
-                            onClick: () => {
+                            onClick: (e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
                                 directCallMetaData = {
                                     locationId: newLocationId,
                                     contactId: contactId,
@@ -607,7 +608,10 @@ function monitorUrlChanges() {
                         size: "32px",
                         color: "#4CAF50",
                         injectIntoFlexContainer: true,
-                        onClick: () => customFunction("click"),
+                        onClick: (e) => {
+                            e.stopPropagation();
+                            customFunction("click")
+                        },
                     });
                     buttonInstance.setPosition("85.43%", "6.4px");
                 });
@@ -643,7 +647,10 @@ function initChildWindow() {
                     size: "32px",
                     color: "#4CAF50",
                     injectIntoFlexContainer: true,
-                    onClick: () => customFunction("click"),
+                    onClick: (e) => {
+                        e.stopPropagation();
+                        customFunction("click")
+                    },
                 });
 
                 // If it's a contact detail page, create the direct call button
@@ -651,7 +658,8 @@ function initChildWindow() {
                     directCallButtonInstance = createDirectCallContactCta({
                         size: "32px",
                         color: "#4CAF50",
-                        onClick: () => {
+                        onClick: (e) => {
+                            e.stopPropagation();
                             directCallMetaData = {
                                 locationId: currentLocationId,
                                 contactId: contactId,
