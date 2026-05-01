@@ -1,4 +1,4 @@
-console.log("TextGrid dialer loaded - V-2.0.2 - Update Dialer headline");
+console.log("TextGrid dialer loaded - V-2.0.3 - Update contact-details page phone selector");
 
 let childWindow = null;
 let currentLocationId = "";
@@ -465,7 +465,7 @@ function createDirectCallContactCta({
         return new Promise((resolve) => {
             const checkElement = () => {
                 const parent = document.querySelector(
-                    ".message-header-actions.contact-detail-actions"
+                    "#phone-calls"
                 );
                 if (parent) {
                     resolve(parent);
@@ -1037,3 +1037,4 @@ initGhlSmartListCallHook({
         customFunction("click");
     }
 });
+
