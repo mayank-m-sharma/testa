@@ -1,4 +1,4 @@
-console.log("TextGrid dialer loaded - V-2.0.4 - add stop propagation to direct call button click event");
+console.log("TextGrid dialer loaded - V-2.0.5 - update child window width");
 
 let childWindow = null;
 let currentLocationId = "";
@@ -151,8 +151,8 @@ function createChildWindow() {
     container.id = "floating-child-window";
     container.style.position = "fixed";
     container.style.top = "50px";
-    container.style.left = window.innerWidth - 347 - 20 + "px"; // mimic original left calc
-    container.style.width = "347px";
+    container.style.left = window.innerWidth - 447 - 20 + "px"; // mimic original left calc
+    container.style.width = "447px";
     container.style.height = "630px";
     container.style.zIndex = "9999";
     container.style.border = "1px solid #ccc";
@@ -1050,4 +1050,3 @@ initGhlSmartListCallHook({
         customFunction("click");
     }
 });
-
